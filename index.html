@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T-Shirt Rental - Login</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            500: '#d4af37',
+                            600: '#aa8c2c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-950 text-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="w-full max-w-md bg-gray-900 border border-gold-500/30 rounded-2xl shadow-2xl p-8 m-4">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-wider text-gold-500">T-SHIRT RENTAL</h1>
+            <p class="text-sm text-gray-400 mt-2">Sign in to your account</p>
+        </div>
+
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Username / ID Number</label>
+                <input type="text" id="username" name="username" required
+                    class="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:border-gold-500 text-white text-sm"
+                    placeholder="Enter your username">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                <input type="password" id="pw" name="pw" required
+                    class="w-full px-4 py-3 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:border-gold-500 text-white text-sm"
+                    placeholder="••••••••">
+            </div>
+
+            <div id="errorMessage" class="hidden text-red-400 text-sm bg-red-950/50 border border-red-800/50 p-3 rounded-lg text-center"></div>
+            <div id="successMessage" class="hidden text-green-400 text-sm bg-green-950/50 border border-green-800/50 p-3 rounded-lg text-center"></div>
+
+            <button type="submit" id="submitBtn"
+                class="w-full py-3 bg-gold-500 hover:bg-gold-600 text-gray-950 font-bold rounded-lg transition duration-200 shadow-lg shadow-gold-500/20">
+                Login
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const pw = document.getElementById('pw').value;
+            const errDiv = document.getElementById('errorMessage');
+            const succDiv = document.getElementById('successMessage');
+            const btn = document.getElementById('submitBtn');
+
+            errDiv.classList.add('hidden');
+            succDiv.classList.add('hidden');
+            btn.textContent = 'Authenticating...';
+
+            // Prepare URL-encoded form data matching your system.php expectation
+            const formData = new URLSearchParams();
+            formData.append('op', 'login');
+            formData.append('username', username);
+            formData.append('pw', pw);
+
+            try {
+                // Change URL to your live Render link when deployed (e.g., 'https://your-app.onrender.com/API/system.php')
+                const response = await fetch('API/system.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    succDiv.textContent = data.message + ' Welcome, ' + (data.FullName || data.username);
+                    succDiv.classList.remove('hidden');
+                    setTimeout(() => {
+                        // Redirect or perform action upon successful login
+                        console.log('Logged in as role:', data.Role);
+                    }, 1500);
+                } else {
+                    errDiv.textContent = data.message || 'Invalid Credentials';
+                    errDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                errDiv.textContent = 'An error occurred. Please check your connection.';
+                errDiv.classList.remove('hidden');
+            } finally {
+                btn.textContent = 'Login';
+            }
+        });
+    </script>
+</body>
+</html>
