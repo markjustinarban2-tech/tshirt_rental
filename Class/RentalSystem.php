@@ -4,10 +4,10 @@ require_once 'Database.php';
 class RentalSystem extends Database {
 
     // 1. User Login
-    public function login($idnum, $pass) {
-        $sql = "SELECT * FROM users WHERE IdNumber=? AND Password=?";
+    public function login($username, $pass) {
+        $sql = "SELECT * FROM users WHERE username=? AND Password=?";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ss", $idnum, $pass);
+        $stmt->bind_param("ss", $username, $pass);
         $stmt->execute();
         $data = $stmt->get_result();
 
@@ -15,7 +15,7 @@ class RentalSystem extends Database {
             return json_encode([
                 'success' => true,
                 'message' => 'Login Successful!',
-                'IdNumber' => $row['IdNumber'],
+                'username' => $row['username'],
                 'Role' => $row['Role'],
                 'FullName' => $row['FullName']
             ]);
@@ -90,10 +90,10 @@ class RentalSystem extends Database {
     }
 
     // 6. Place Order (Customer)
-    public function placeOrder($idnum, $item_id, $rental_days, $total_price) {
-        $sql = "INSERT INTO orders (idnum, item_id, rental_days, total_price, status) VALUES (?, ?, ?, ?, 'New')";
+    public function placeOrder($username, $item_id, $rental_days, $total_price) {
+        $sql = "INSERT INTO orders (username, item_id, rental_days, total_price, status) VALUES (?, ?, ?, ?, 'New')";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("siid", $idnum, $item_id, $rental_days, $total_price);
+        $stmt->bind_param("siid", $username, $item_id, $rental_days, $total_price);
         $success = $stmt->execute();
         return json_encode(['success' => $success]);
     }

@@ -9,7 +9,7 @@ $op = $_POST['op'] ?? '';
 
 switch ($op) {
     case 'login':
-        echo $system->login($_POST['idnum'], $_POST['pw']);
+        echo $system->login($_POST['username'], $_POST['pw']);
         break;
     case 'dashboard_stats':
         echo $system->getDashboardStats();
@@ -32,7 +32,7 @@ switch ($op) {
         echo $system->deleteItem($_POST['id']);
         break;
     case 'place_order':
-        echo $system->placeOrder($_POST['idnum'], $_POST['item_id'], $_POST['rental_days'], $_POST['total_price']);
+        echo $system->placeOrder($_POST['username'], $_POST['item_id'], $_POST['rental_days'], $_POST['total_price']);
         break;
     default:
         echo json_encode(['error' => 'Invalid operation']);
